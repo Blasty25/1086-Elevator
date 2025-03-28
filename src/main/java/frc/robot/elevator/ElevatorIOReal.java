@@ -22,8 +22,8 @@ import static frc.robot.elevator.ElevatorConstants.*;
 /** Add your docs here. */
 public class ElevatorIOReal implements ElevatorIO{
 
-    private TalonFX leftKrack;
-    private TalonFX rightKrack;
+    private TalonFX leftKrack = new TalonFX(leftID);
+    private TalonFX rightKrack = new TalonFX(rightID);
 
     private TalonFXConfiguration config = new TalonFXConfiguration();
 
@@ -36,6 +36,7 @@ public class ElevatorIOReal implements ElevatorIO{
 
         config.Slot0.GravityType = GravityTypeValue.valueOf(gravity);
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+        config.Feedback.SensorToMechanismRatio = positionConversionFactor;
         
         config.MotorOutput.withInverted(InvertedValue.Clockwise_Positive);
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
@@ -60,6 +61,10 @@ public class ElevatorIOReal implements ElevatorIO{
         inputs.rightVolts = rightKrack.getSupplyVoltage().getValue();
 
         inputs.velocity = (leftKrack.getPosition().getValue().in(Rotations) * positionConversionFactor) / 60;
+    }
 
+    @Override
+    public void setVolts(double volts) {
+        leftKrack.setVoltage(volts);
     }
 }

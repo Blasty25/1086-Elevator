@@ -37,6 +37,9 @@ public class ElevatorIOReal implements ElevatorIO{
         config.MotorOutput.withInverted(InvertedValue.Clockwise_Positive);
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
+        config.Audio.BeepOnBoot = true;
+        
+
         config.MotionMagic.MotionMagicCruiseVelocity = positionConversionFactor / 60;
 
         leftKrack.getConfigurator().apply(config);

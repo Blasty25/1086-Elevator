@@ -23,7 +23,7 @@ public class ElevatorConstants {
     public static final double maxHeight = Inches.of(44).in(Meters);
     public static final double minHeight = Inches.of(0).in(Meters);
     public static final boolean simGravity = false;
-    public static final DCMotor gearbox = DCMotor.getNEO(2);
+    public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(2);
 
     //funky isfinished stuff
     public static final double tolerance = 0.01;

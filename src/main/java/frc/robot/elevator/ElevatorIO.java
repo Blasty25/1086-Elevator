@@ -5,6 +5,7 @@
 package frc.robot.elevator;
 
 import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Fahrenheit;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Rotation;
@@ -17,6 +18,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 
 /** Add your docs here. */
@@ -32,6 +34,9 @@ public interface ElevatorIO {
 
         public Current leftCurrent = Amps.zero();
         public Current rightCurrent = Amps.zero();
+
+        public Temperature leftMotor = Fahrenheit.zero();
+        public Temperature rightMotor = Fahrenheit.zero();
         
         public double velocity = 0.0;
 

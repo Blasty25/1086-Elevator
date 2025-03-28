@@ -5,25 +5,20 @@
 package frc.robot.elevator;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 
 import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Volts;
-import static frc.robot.elevator.ElevatorConstants.*;
 
-public class ElevatorIOSim implements ElevatorIO{
+public class ElevatorIOSim implements ElevatorIO {
 
     private ElevatorSim elevator;
-
     private double volts = 0.0;
 
     public ElevatorIOSim() {
-        this.elevator = new ElevatorSim(
-                LinearSystemId.createElevatorSystem(gearbox, elevatorMass, drumRadius, gearing),
-                gearbox, minHeight, maxHeight, simGravity, minHeight);
+        this.elevator = new ElevatorSim(ElevatorConstants.KV, ElevatorConstants.KA, ElevatorConstants.gearbox,
+                ElevatorConstants.minHeight,
+                ElevatorConstants.maxHeight, ElevatorConstants.simGravity, ElevatorConstants.maxHeight);
     }
 
     @Override
@@ -47,5 +42,4 @@ public class ElevatorIOSim implements ElevatorIO{
         elevator.setInputVoltage(0);
     }
 
-    
 }

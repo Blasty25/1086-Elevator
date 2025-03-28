@@ -4,13 +4,10 @@
 
 package frc.robot.elevator;
 
-import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
@@ -28,7 +25,7 @@ public class Elevator extends SubsystemBase {
     private Distance difference = Meters.zero();
     //KP is 110 ik but whatever!
     private ProfiledPIDController pid = new ProfiledPIDController(110, 0.0, 0.0,
-            new TrapezoidProfile.Constraints(3.8, 4));
+            new TrapezoidProfile.Constraints(ElevatorConstants.KV, ElevatorConstants.KA));
 
     public Elevator(ElevatorIO io) {
         this.io = io;
@@ -36,19 +33,19 @@ public class Elevator extends SubsystemBase {
     }
 
     public void setSetpoint(String setpoint) {  //Setpoints are in Meters!
-        if (setpoint.equals("STOW")) {
+        if (setpoint.equals(ElevatorConstants.stow)) {
             setPosition(0, 0);
         }
-        if (setpoint.equals("L1")) {
+        if (setpoint.equals(ElevatorConstants.l1)) {
             setPosition(0.4,0);
         }
-        if (setpoint.equals("L2")) {
+        if (setpoint.equals(ElevatorConstants.l2)) {
             setPosition(0.678,0);
         }
-        if (setpoint.equals("L3")) {
+        if (setpoint.equals(ElevatorConstants.l3)) {
             setPosition(1.154,0);
         }
-        if (setpoint.equals("L4")) {
+        if (setpoint.equals(ElevatorConstants.l4)) {
             setPosition(1.233,0);
         }
     }
@@ -60,8 +57,7 @@ public class Elevator extends SubsystemBase {
     public Command resetEncoder() {
         return Commands.runOnce(() -> {
             io.resetEncoder();
-            System.out.println("Encoder");
-        }, this).ignoringDisable(   true);
+        }, this).ignoringDisable(true);
     }
 
     public Command runSetpoint(String position) {
@@ -83,7 +79,6 @@ public class Elevator extends SubsystemBase {
 
         Logger.recordOutput("Elevator/PIDOutput", pidOutput);
 
-        //TODO TEST only with PID CONTROL Remove ffOutput smth bugging not working!!!!! 
         io.setVolts(pidOutput);
         
         difference = (inputs.targetHeight.minus(Meters.of(inputs.currentHeight)));

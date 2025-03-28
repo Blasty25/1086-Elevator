@@ -24,6 +24,8 @@ public class ElevatorConstants {
     public static final double minHeight = Inches.of(0).in(Meters);
     public static final boolean simGravity = false;
     public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(2);
+    public static final double KV = 3.8;
+    public static final double KA = 4.0;
 
     //funky isfinished stuff
     public static final double tolerance = 0.01;

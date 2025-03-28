@@ -12,14 +12,16 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static frc.robot.elevator.ElevatorConstants.*;
 
 /** Add your docs here. */
 public class ElevatorIOReal implements ElevatorIO{
 
-    private TalonFX leftKrack = new TalonFX(leftID);
-    private TalonFX rightKrack = new TalonFX(rightID);
+    private TalonFX leftKrak = new TalonFX(leftID);
+    private TalonFX rightKrak = new TalonFX(rightID);
 
     private TalonFXConfiguration config = new TalonFXConfiguration();
 
@@ -38,32 +40,29 @@ public class ElevatorIOReal implements ElevatorIO{
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
         config.Audio.BeepOnBoot = true;
-        
 
-        config.MotionMagic.MotionMagicCruiseVelocity = positionConversionFactor / 60;
+        leftKrak.getConfigurator().apply(config);
 
-        leftKrack.getConfigurator().apply(config);
+        rightKrak.setControl(new Follower(leftID, true));
 
-        rightKrack.setControl(new Follower(leftID, true));
-
-        leftKrack.setPosition(0.0);
+        rightKrak.getConfigurator().apply(config);
     }
 
     @Override
     public void updateInputs(ElevatorIOInputs inputs) {
-        inputs.currentHeight = leftKrack.getPosition().getValue().in(Rotations) * positionConversionFactor;
+        inputs.currentHeight = leftKrak.getPosition().getValue().in(Rotations) * ElevatorConstants.drumRadius;
         
-        inputs.leftCurrent = leftKrack.getStatorCurrent().getValue();
-        inputs.rightCurrent = rightKrack.getStatorCurrent().getValue();
+        inputs.leftCurrent = leftKrak.getStatorCurrent().getValue();
+        inputs.rightCurrent = rightKrak.getStatorCurrent().getValue();
 
-        inputs.leftVolts = leftKrack.getSupplyVoltage().getValue();
-        inputs.rightVolts = rightKrack.getSupplyVoltage().getValue();
+        inputs.leftVolts = leftKrak.getMotorVoltage().getValue();
+        inputs.rightVolts = rightKrak.getMotorVoltage().getValue();
 
-        inputs.velocity = (leftKrack.getPosition().getValue().in(Rotations) * positionConversionFactor) / 60;
+        inputs.velocity = leftKrak.getVelocity().getValue().in(RadiansPerSecond);
     }
 
     @Override
     public void setVolts(double volts) {
-        leftKrack.setVoltage(volts);
+        leftKrak.setVoltage(volts);
     }
 }

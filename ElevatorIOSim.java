@@ -7,7 +7,9 @@ package frc.robot.subsystems.elevator;
 import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import frc.robot.Constants.ElevatorConstants;
@@ -19,11 +21,11 @@ public class ElevatorIOSim implements ElevatorIO {
 
     public ElevatorIOSim() {
         this.elevator = new ElevatorSim(
-            ElevatorConstants.kVDefault,
-            ElevatorConstants.kADefaults[0],
-            DCMotor.getKrakenX60(2), 0,
-            ElevatorConstants.maxHeight.in(Meters),
-            true, 0);
+                LinearSystemId.createElevatorSystem(DCMotor.getKrakenX60(2), ElevatorConstants.mass.in(Kilogram),
+                        ElevatorConstants.radius.in(Meters), ElevatorConstants.gearRatio),
+                DCMotor.getKrakenX60(2), 0,
+                ElevatorConstants.maxHeight.in(Meters),
+                true, 0);
     }
 
     @Override

@@ -25,9 +25,9 @@ public class Elevator extends SubsystemBase {
     private Distance difference = Meters.zero();
     //KP is 110 ik but whatever!
     private ProfiledPIDController pid = new ProfiledPIDController(
-            AdjustableValues.getNumber("ELEV_kP"),
-            AdjustableValues.getNumber("ELEV_kI"),
-            AdjustableValues.getNumber("ELEV_kD"),
+            AdjustableValues.getNumber("Elev_kP"),
+            AdjustableValues.getNumber("Elev_kI"),
+            AdjustableValues.getNumber("Elev_kD"),
             new TrapezoidProfile.Constraints(
                 ElevatorConstants.maxVelocity.in(MetersPerSecond), 
                 ElevatorConstants.maxAcceleration.in(MetersPerSecondPerSecond)));
@@ -57,11 +57,11 @@ public class Elevator extends SubsystemBase {
     @Override
     public void periodic() {
         // Updating PID values
-        if (AdjustableValues.hasChanged("ELEV_kP")) pid.setP(AdjustableValues.getNumber("ELEV_kP"));
-        if (AdjustableValues.hasChanged("ELEV_kI")) pid.setI(AdjustableValues.getNumber("ELEV_kI"));
-        if (AdjustableValues.hasChanged("ELEV_kD")) pid.setD(AdjustableValues.getNumber("ELEV_kD"));
+        if (AdjustableValues.hasChanged("Elev_kP")) pid.setP(AdjustableValues.getNumber("Elev_kP"));
+        if (AdjustableValues.hasChanged("Elev_kI")) pid.setI(AdjustableValues.getNumber("Elev_kI"));
+        if (AdjustableValues.hasChanged("Elev_kD")) pid.setD(AdjustableValues.getNumber("Elev_kD"));
 
-        // Logger.processInputs("Elevator", inputs);
+        Logger.processInputs("Elevator", inputs);
         io.updateInputs(inputs);
 
         inputs.targetHeight = Meters.of(pid.getGoal().position);

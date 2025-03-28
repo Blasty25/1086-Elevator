@@ -4,48 +4,49 @@
 
 package frc.robot.subsystems.elevator;
 
+import static edu.wpi.first.units.Units.*;
+
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import frc.robot.Constants.ElevatorConstants;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Volts;
-import static frc.robot.elevator.ElevatorConstants.*;
-
-public class ElevatorIOSim implements ElevatorIO{
-
+public class ElevatorIOSim implements ElevatorIO {
     private ElevatorSim elevator;
 
-    private double volts = 0.0;
+    private Voltage volts = Volts.zero();
 
     public ElevatorIOSim() {
         this.elevator = new ElevatorSim(
-                LinearSystemId.createElevatorSystem(gearbox, elevatorMass, drumRadius, gearing),
-                gearbox, minHeight, maxHeight, simGravity, minHeight);
+            ElevatorConstants.kVDefault,
+            ElevatorConstants.kADefaults[0],
+            DCMotor.getKrakenX60(2), 0,
+            ElevatorConstants.maxHeight.in(Meters),
+            true, 0);
     }
 
     @Override
     public void updateInputs(ElevatorIOInputs inputs) {
         elevator.update(0.02);
-        inputs.leftVolts = Volts.of(volts);
-        inputs.currentHeight = elevator.getPositionMeters();
-        inputs.velocity = elevator.getVelocityMetersPerSecond();
+        inputs.leftVolts = volts;
+        inputs.currentHeight = Meters.of(elevator.getPositionMeters());
+        inputs.velocity = MetersPerSecond.of(elevator.getVelocityMetersPerSecond());
 
         inputs.leftCurrent = Amps.of(elevator.getCurrentDrawAmps());
+
+        inputs.rightVolts = inputs.leftVolts.unaryMinus();
+        inputs.rightCurrent = inputs.leftCurrent.unaryMinus();
     }
 
     @Override
-    public void setVolts(double voltage) {
+    public void setVolts(Voltage voltage) {
         this.volts = voltage;
-        elevator.setInputVoltage(MathUtil.clamp(voltage, -12, 12));
+        elevator.setInputVoltage(MathUtil.clamp(voltage.in(Volts), -12, 12));
     }
 
     @Override
     public void resetEncoder() {
         elevator.setInputVoltage(0);
     }
-
-    
 }

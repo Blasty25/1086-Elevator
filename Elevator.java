@@ -4,13 +4,8 @@
 
 package frc.robot.subsystems.elevator;
 
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.*;
 
-import org.littletonrobotics.junction.Logger;
-
-import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
@@ -18,75 +13,66 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.AdjustableValues;
+import frc.robot.Constants.ElevatorConstants;
+import org.littletonrobotics.junction.Logger;
 
 /** Add your docs here. */
 public class Elevator extends SubsystemBase {
-
     private ElevatorIO io;
     private ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
     private Distance difference = Meters.zero();
     //KP is 110 ik but whatever!
-    private ProfiledPIDController pid = new ProfiledPIDController(110, 0.0, 0.0,
-            new TrapezoidProfile.Constraints(3.8, 4));
+    private ProfiledPIDController pid = new ProfiledPIDController(
+            AdjustableValues.getNumber("ELEV_kP"),
+            AdjustableValues.getNumber("ELEV_kI"),
+            AdjustableValues.getNumber("ELEV_kD"),
+            new TrapezoidProfile.Constraints(
+                ElevatorConstants.maxVelocity.in(MetersPerSecond), 
+                ElevatorConstants.maxAcceleration.in(MetersPerSecondPerSecond)));
 
     public Elevator(ElevatorIO io) {
         this.io = io;
+
         pid.setTolerance(0.001);
     }
 
-    public void setSetpoint(String setpoint) {  //Setpoints are in Meters!
-        if (setpoint.equals("STOW")) {
-            setPosition(0, 0);
-        }
-        if (setpoint.equals("L1")) {
-            setPosition(0.4,0);
-        }
-        if (setpoint.equals("L2")) {
-            setPosition(0.678,0);
-        }
-        if (setpoint.equals("L3")) {
-            setPosition(1.154,0);
-        }
-        if (setpoint.equals("L4")) {
-            setPosition(1.233,0);
-        }
-    }
-
-    public void setPosition(double position, double velocity) {
-        pid.setGoal(new State(position, velocity));
+    public void setPosition(Distance position) {
+        pid.setGoal(new State(position.in(Meters), 0));
     }
 
     public Command resetEncoder() {
         return Commands.runOnce(() -> {
             io.resetEncoder();
-            System.out.println("Encoder");
-        }, this).ignoringDisable(   true);
+        }, this).ignoringDisable(true);
     }
 
-    public Command runSetpoint(String position) {
-        return Commands.run(() -> {
-            String setpoint = position;
-            this.setSetpoint(setpoint);
+    public Command setGoal(Distance position) {
+        return Commands.runOnce(() -> {
+            setPosition(position);
         }, this);
     }
 
     @Override
     public void periodic() {
-        Logger.processInputs("Elevator", inputs);
+        // Updating PID values
+        if (AdjustableValues.hasChanged("ELEV_kP")) pid.setP(AdjustableValues.getNumber("ELEV_kP"));
+        if (AdjustableValues.hasChanged("ELEV_kI")) pid.setI(AdjustableValues.getNumber("ELEV_kI"));
+        if (AdjustableValues.hasChanged("ELEV_kD")) pid.setD(AdjustableValues.getNumber("ELEV_kD"));
+
+        // Logger.processInputs("Elevator", inputs);
         io.updateInputs(inputs);
 
         inputs.targetHeight = Meters.of(pid.getGoal().position);
-        inputs.setpoint = pid.getGoal().position;
 
-        double pidOutput = pid.calculate(inputs.currentHeight);
+        double pidOutput = pid.calculate(inputs.currentHeight.in(Meters));
 
         Logger.recordOutput("Elevator/PIDOutput", pidOutput);
 
-        //TODO TEST only with PID CONTROL Remove ffOutput smth bugging not working!!!!! 
-        io.setVolts(pidOutput);
+        io.setVolts(Volts.of(pidOutput));
         
-        difference = (inputs.targetHeight.minus(Meters.of(inputs.currentHeight)));
+        difference = (inputs.targetHeight.minus(inputs.currentHeight));
         Logger.recordOutput("/Elevator/Difference", difference.in(Meters));
         Logger.recordOutput("Elevator/TargetHeight", inputs.targetHeight);
     }

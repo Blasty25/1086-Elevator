@@ -4,38 +4,30 @@
 
 package frc.robot.subsystems.elevator;
 
-import static edu.wpi.first.units.Units.Inch;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Kilograms;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.units.measure.Mass;
 
 /** Add your docs here. */
 public class ElevatorConstants {
 
-    //sim stuff
+    // sim stuff
     public static final double elevatorMass = Pounds.of(30.0).in(Kilograms);  //Returns The mass in kilograms
     public static final double drumRadius = Inches.of(0.9175).in(Meters);
-    public static final double gearing = 0.875; //Check with turbo
+    public static final double gearing = 9;
     public static final double maxHeight = Inches.of(44).in(Meters);
     public static final double minHeight = Inches.of(0).in(Meters);
     public static final boolean simGravity = false;
     public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(2);
 
-    //funky isfinished stuff
+    // funky isfinished stuff
     public static final double tolerance = 0.01;
 
-    //HARDWARE!!!!
+    // HARDWARE!!!!
     public static final int leftID = 31;
     public static final int rightID = 32;
     public static final double positionConversionFactor = 0.01511; 
     public static final int currentLimit = 40;
-    public static final int gravity = 2; //idk gotta check
-
-
 
     //Dw bout this i use strings to set my setpoints
     public static final String stow = "STOW";

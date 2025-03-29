@@ -6,41 +6,53 @@ package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.*;
 
-import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Mass;
 
 /** Add your docs here. */
 public class ElevatorConstants {
+    public static final Mass mass = Pounds.of(25.1);
+    public static final Distance radius = Meters.of(0.02864789);
+    public static final Distance maxHeight = Inches.of(69);
+    public static final double gearRatio = 9;
 
-    // sim stuff
-    public static final double elevatorMass = Pounds.of(30.0).in(Kilograms);  //Returns The mass in kilograms
-    public static final double drumRadius = Inches.of(0.9175).in(Meters);
-    public static final double gearing = 9;
-    public static final double maxHeight = Inches.of(44).in(Meters);
-    public static final double minHeight = Inches.of(0).in(Meters);
-    public static final boolean simGravity = false;
-    public static final DCMotor gearbox = DCMotor.getKrakenX60Foc(2);
+    public static final LinearVelocity maxVelocity = MetersPerSecond.of(1.8);
+    public static final LinearAcceleration maxAcceleration = MetersPerSecondPerSecond.of(6.5);
 
-    // funky isfinished stuff
-    public static final double tolerance = 0.01;
+    public static final double positionConversionFactor = 2.0 * Math.PI * radius.in(Meters) / gearRatio;
+    public static final double velocityConversionFactor = positionConversionFactor / 60.0;
 
-    // HARDWARE!!!!
-    public static final int leftID = 31;
-    public static final int rightID = 32;
-    public static final double positionConversionFactor = 0.01511; 
-    public static final int currentLimit = 40;
+    public static final Current currentLimit = Amps.of(60);
 
-    //Dw bout this i use strings to set my setpoints
-    public static final String stow = "STOW";
-    public static final String l1 = "L1";
-    public static final String l2 = "L2";
-    public static final String l3 = "L3";
-    public static final String l4 = "L4";
+    public static final double kPDefault = 110;
+    public static final double kIDefault = 0;
+    public static final double kDDefault = 0;
 
+    public static final double[] kSDefaults = {0.6, 0.6, 0.9};
+    public static final double[] kGDefaults = {0.3, 0.3, 0.3};
+    public static final double kVDefault = 3;
+    public static final double[] kADefaults = {0.4, 0.3, 0.6};
 
-    //TARGET SETPOINTS in INCHES!!! 
-    public static final double L4 = 40.0;
-    public static final double L3 = 34.0;
-    public static final double L2 = 20.0;
-    public static final double L1 = 12.0;
-    public static final double STOW = 7.0;
+    public static final double maxProfileVoltage = 6.0;
+
+    public static final Distance sysIdMinPosition = Meters.of(0.1);
+    public static final Distance sysIdMaxPosition = Meters.of(1.5);
+
+    public static final double sysIdRampUp = 2.5;
+    public static final double sysIdStep = 5.5;
+    public static final double sysIdTimeout = 20.0;
+
+    public class ElevatorPositions {
+        public static final Distance STOW = Meters.of(0);
+        public static final Distance INTAKE = Meters.of(0.057);
+        public static final Distance L1 = Meters.of(0.33);
+        public static final Distance L2 = Meters.of(0.63);
+        public static final Distance L3 = Meters.of(1.05);
+        public static final Distance L3Algae = Meters.of(0.81);
+        public static final Distance L2Algae = Meters.zero();
+        public static final Distance L4 = Meters.of(1.76);
+    }
 }

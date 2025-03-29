@@ -1,8 +1,6 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems.elevator;
+
+import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
@@ -15,20 +13,15 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants.ElevatorConstants;
 
-import static edu.wpi.first.units.Units.*;
-
-/** Add your docs here. */
-public class ElevatorIOReal implements ElevatorIO{
-
-    private TalonFX leftKrak;
-    private TalonFX rightKrak;
+public class ElevatorIOReal implements ElevatorIO {
+    private TalonFX leftMotor;
+    private TalonFX rightMotor;
 
     private TalonFXConfiguration config = new TalonFXConfiguration();
 
-
     public ElevatorIOReal(int leftId, int rightId){
-        leftKrak = new TalonFX(leftId);
-        rightKrak = new TalonFX(rightId);
+        leftMotor = new TalonFX(leftId);
+        rightMotor = new TalonFX(rightId);
 
         config.Audio.BeepOnBoot = true;
         config.CurrentLimits.StatorCurrentLimit = ElevatorConstants.currentLimit.in(Amps);
@@ -40,30 +33,30 @@ public class ElevatorIOReal implements ElevatorIO{
         config.Voltage.PeakForwardVoltage = 12;
         config.Voltage.PeakReverseVoltage = -12;
         
-        leftKrak.getConfigurator().apply(config);
-        rightKrak.getConfigurator().apply(config);
+        leftMotor.getConfigurator().apply(config);
+        rightMotor.getConfigurator().apply(config);
 
-        rightKrak.setControl(new Follower(leftId, true));
+        rightMotor.setControl(new Follower(leftId, true));
     }
 
     @Override
     public void updateInputs(ElevatorIOInputs inputs) {
-        inputs.currentHeight = Meters.of(leftKrak.getPosition().getValue().in(Radians) * ElevatorConstants.radius.in(Meters));
+        inputs.currentHeight = Meters.of(leftMotor.getPosition().getValue().in(Radians) * ElevatorConstants.radius.in(Meters));
         
-        inputs.leftCurrent = leftKrak.getStatorCurrent().getValue();
-        inputs.rightCurrent = rightKrak.getStatorCurrent().getValue();
+        inputs.leftCurrent = leftMotor.getStatorCurrent().getValue();
+        inputs.rightCurrent = rightMotor.getStatorCurrent().getValue();
 
-        inputs.leftVolts = leftKrak.getMotorVoltage().getValue();
-        inputs.rightVolts = rightKrak.getMotorVoltage().getValue();
+        inputs.leftVolts = leftMotor.getMotorVoltage().getValue();
+        inputs.rightVolts = rightMotor.getMotorVoltage().getValue();
 
-        inputs.leftTemp = leftKrak.getDeviceTemp().getValue();
-        inputs.rightTemp = rightKrak.getDeviceTemp().getValue();
+        inputs.leftTemp = leftMotor.getDeviceTemp().getValue();
+        inputs.rightTemp = rightMotor.getDeviceTemp().getValue();
 
-        inputs.velocity = MetersPerSecond.of(leftKrak.getVelocity().getValue().in(RadiansPerSecond) * ElevatorConstants.radius.in(Meters));
+        inputs.velocity = MetersPerSecond.of(leftMotor.getVelocity().getValue().in(RadiansPerSecond) * ElevatorConstants.radius.in(Meters));
     }
 
     @Override
     public void setVolts(Voltage volts) {
-        leftKrak.setControl(new VoltageOut(volts));
+        leftMotor.setControl(new VoltageOut(volts));
     }
 }

@@ -24,8 +24,6 @@ public class Elevator extends SubsystemBase {
     private ElevatorIO io;
     private ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
-    private Distance difference = Meters.zero();
-    //KP is 110 ik but whatever!
     private ProfiledPIDController pid = new ProfiledPIDController(
             AdjustableValues.getNumber("Elev_kP"),
             AdjustableValues.getNumber("Elev_kI"),
@@ -108,6 +106,8 @@ public class Elevator extends SubsystemBase {
 
         inputs.targetHeight = Meters.of(pid.getGoal().position);
 
+        Logger.recordOutput("Elevator/setpointv", pid.getSetpoint().velocity);
+
         double ffVolts = 0;
         if (inputs.currentHeight.in(Meters) < 0.33) {
             ffVolts = l1FeedForward.calculateWithVelocities(inputs.velocity.in(MetersPerSecond), pid.getSetpoint().velocity);
@@ -128,7 +128,7 @@ public class Elevator extends SubsystemBase {
 
         io.setVolts(Volts.of(pidOutput + ffVolts));
 
-        difference = (inputs.targetHeight.minus(inputs.currentHeight));
+        Distance difference = inputs.targetHeight.minus(inputs.currentHeight);
         Logger.recordOutput("Elevator/Difference", difference.in(Meters));
         Logger.recordOutput("Elevator/TargetHeight", inputs.targetHeight);
     }

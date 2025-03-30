@@ -26,13 +26,16 @@ public class ElevatorIOReal implements ElevatorIO {
         config.CurrentLimits.StatorCurrentLimit = ElevatorConstants.currentLimit.in(Amps);
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         config.Feedback.SensorToMechanismRatio = ElevatorConstants.gearRatio;
-        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         config.Slot0.GravityType = GravityTypeValue.Elevator_Static;
         config.Voltage.PeakForwardVoltage = 12;
         config.Voltage.PeakReverseVoltage = -12;
         
         leftMotor.getConfigurator().apply(config);
+
+        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        
         rightMotor.getConfigurator().apply(config);
 
         rightMotor.setControl(new Follower(leftId, true));

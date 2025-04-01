@@ -31,10 +31,10 @@ public class ElevatorConstants {
     public static final double kIDefault = 0;
     public static final double kDDefault = 0;
 
-    public static final double[] kSDefaults = { 0.6, 0.6, 0.9 };
-    public static final double[] kGDefaults = { 0.3, 0.3, 0.3 };
-    public static final double kVDefault = 3;
-    public static final double[] kADefaults = { 0.4, 0.3, 0.6 };
+    public static final double[] kSDefaults = {0.6, 0.6, 0.9};
+    public static final double[] kGDefaults = {0.3, 0.3, 0.3};
+    public static final double[] kVDefaults = {3.0, 3.0, 3.0};
+    public static final double[] kADefaults = {0.4, 0.3, 0.6};
 
     public static final double maxProfileVoltage = 6.0;
 
@@ -50,9 +50,9 @@ public class ElevatorConstants {
         public static final Distance INTAKE = Meters.of(0.057);
         public static final Distance L1 = Meters.of(0.33);
         public static final Distance L2 = Meters.of(0.63);
+        public static final Distance L2Algae = Meters.zero();
         public static final Distance L3 = Meters.of(1.05);
         public static final Distance L3Algae = Meters.of(0.81);
-        public static final Distance L2Algae = Meters.zero();
         public static final Distance L4 = Meters.of(1.76);
     }
 }

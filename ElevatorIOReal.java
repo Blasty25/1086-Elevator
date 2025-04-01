@@ -18,7 +18,7 @@ public class ElevatorIOReal implements ElevatorIO {
 
     private TalonFXConfiguration config = new TalonFXConfiguration();
 
-    public ElevatorIOReal(int leftId, int rightId){
+    public ElevatorIOReal(int leftId, int rightId) {
         leftMotor = new TalonFX(leftId);
         rightMotor = new TalonFX(rightId);
 
@@ -31,11 +31,11 @@ public class ElevatorIOReal implements ElevatorIO {
         config.Slot0.GravityType = GravityTypeValue.Elevator_Static;
         config.Voltage.PeakForwardVoltage = 12;
         config.Voltage.PeakReverseVoltage = -12;
-        
+
         leftMotor.getConfigurator().apply(config);
 
         config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        
+
         rightMotor.getConfigurator().apply(config);
 
         rightMotor.setControl(new Follower(leftId, true));
@@ -44,7 +44,7 @@ public class ElevatorIOReal implements ElevatorIO {
     @Override
     public void updateInputs(ElevatorIOInputs inputs) {
         inputs.currentHeight = Meters.of(leftMotor.getPosition().getValue().in(Radians) * ElevatorConstants.radius.in(Meters));
-        
+
         inputs.leftCurrent = leftMotor.getStatorCurrent().getValue();
         inputs.rightCurrent = rightMotor.getStatorCurrent().getValue();
 

@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.*;
@@ -15,11 +11,9 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.util.AdjustableValues;
-
+import frc.robot.util.AdjustableValues;
 import org.littletonrobotics.junction.Logger;
 
-/** Add your docs here. */
 public class Elevator extends SubsystemBase {
     private ElevatorIO io;
     private ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
@@ -29,8 +23,8 @@ public class Elevator extends SubsystemBase {
             AdjustableValues.getNumber("Elev_kI"),
             AdjustableValues.getNumber("Elev_kD"),
             new TrapezoidProfile.Constraints(
-                ElevatorConstants.maxVelocity.in(MetersPerSecond),
-                ElevatorConstants.maxAcceleration.in(MetersPerSecondPerSecond)));
+                    ElevatorConstants.maxVelocity.in(MetersPerSecond),
+                    ElevatorConstants.maxAcceleration.in(MetersPerSecondPerSecond)));
 
     private ElevatorFeedforward l1FeedForward = new ElevatorFeedforward(
             AdjustableValues.getNumber("Elev_kS_L1"),
@@ -110,15 +104,18 @@ public class Elevator extends SubsystemBase {
 
         double ffVolts = 0;
         if (inputs.currentHeight.in(Meters) < 0.33) {
-            ffVolts = l1FeedForward.calculateWithVelocities(inputs.velocity.in(MetersPerSecond), pid.getSetpoint().velocity);
+            ffVolts = l1FeedForward.calculateWithVelocities(inputs.velocity.in(MetersPerSecond),
+                    pid.getSetpoint().velocity);
         }
 
-	    if (inputs.currentHeight.in(Meters) < 0.65) {
-            ffVolts = l2FeedForward.calculateWithVelocities(inputs.velocity.in(MetersPerSecond), pid.getSetpoint().velocity);
+        if (inputs.currentHeight.in(Meters) < 0.65) {
+            ffVolts = l2FeedForward.calculateWithVelocities(inputs.velocity.in(MetersPerSecond),
+                    pid.getSetpoint().velocity);
         }
 
         if (inputs.currentHeight.in(Meters) > 0.65) {
-            ffVolts = l3FeedForward.calculateWithVelocities(inputs.velocity.in(MetersPerSecond), pid.getSetpoint().velocity);
+            ffVolts = l3FeedForward.calculateWithVelocities(inputs.velocity.in(MetersPerSecond),
+                    pid.getSetpoint().velocity);
         }
 
         double pidOutput = pid.calculate(inputs.currentHeight.in(Meters));

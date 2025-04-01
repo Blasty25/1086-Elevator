@@ -16,10 +16,10 @@ public class ElevatorIOSim implements ElevatorIO {
     public ElevatorIOSim() {
         this.elevator = new ElevatorSim(
                 LinearSystemId.createElevatorSystem(
-                    DCMotor.getKrakenX60(2),
-                    ElevatorConstants.mass.in(Kilograms),
-                    ElevatorConstants.radius.in(Meters),
-                    ElevatorConstants.gearRatio),
+                        DCMotor.getKrakenX60(2),
+                        ElevatorConstants.mass.in(Kilograms),
+                        ElevatorConstants.radius.in(Meters),
+                        ElevatorConstants.gearRatio),
                 DCMotor.getKrakenX60(2), 0,
                 ElevatorConstants.maxHeight.in(Meters),
                 true, 0);

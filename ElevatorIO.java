@@ -16,7 +16,7 @@ import org.littletonrobotics.junction.AutoLog;
 /** Add your docs here. */
 public interface ElevatorIO {
     @AutoLog
-    public static class ElevatorIOInputs{
+    public static class ElevatorIOInputs {
         public Distance targetHeight = Meters.zero();
         public Distance currentHeight = Meters.zero();
 
@@ -28,7 +28,7 @@ public interface ElevatorIO {
 
         public Temperature leftTemp = Celsius.zero();
         public Temperature rightTemp = Celsius.zero();
-        
+
         public LinearVelocity velocity = MetersPerSecond.zero();
     }
 

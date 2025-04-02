@@ -8,8 +8,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.AdjustableValues;
 import org.littletonrobotics.junction.Logger;
@@ -64,10 +62,8 @@ public class Elevator extends SubsystemBase {
         io.setVolts(volts);
     }
 
-    public Command resetEncoder() {
-        return Commands.runOnce(() -> {
-            io.resetEncoder();
-        }, this).ignoringDisable(true);
+    public void resetEncoder() {
+        io.resetEncoder();
     }
 
     @Override

@@ -20,9 +20,7 @@ public class SetElevatorSpeed extends Command {
         addRequirements(elevator);
     }
 
-    @Override
-    public void initialize() {}
-
+    /** Called every time the scheduler runs while the command is scheduled. */
     @Override
     public void execute() {
         double speed = throttle.get();
@@ -33,11 +31,7 @@ public class SetElevatorSpeed extends Command {
         elevator.setVolts(Volts.of(speed * RobotController.getInputVoltage()));
     }
 
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
-
+    /** Called once the command ends or is interrupted. */
     @Override
     public void end(boolean interrupted) {
         elevator.setVolts(Volts.zero());

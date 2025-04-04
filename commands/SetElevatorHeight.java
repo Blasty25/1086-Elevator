@@ -15,19 +15,15 @@ public class SetElevatorHeight extends Command {
         addRequirements(elevator);
     }
 
+    /** Called when the command is initially scheduled. */
     @Override
     public void initialize() {
         elevator.setPosition(height);
     }
 
-    @Override
-    public void execute() {}
-
+    /** Returns true when the command should end. */
     @Override
     public boolean isFinished() {
         return true;
     }
-
-    @Override
-    public void end(boolean interrupted) {}
 }

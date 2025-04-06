@@ -11,8 +11,6 @@ public class SetElevatorHeight extends Command {
     public SetElevatorHeight(Elevator elevator, Distance height) {
         this.elevator = elevator;
         this.height = height;
-
-        addRequirements(elevator);
     }
 
     /** Called when the command is initially scheduled. */

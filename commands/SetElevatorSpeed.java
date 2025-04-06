@@ -26,8 +26,6 @@ public class SetElevatorSpeed extends Command {
         this.elevator = elevator;
         this.throttle = throttle;
         this.percentSupplier = percentSupplier;
-
-        addRequirements(elevator);
     }
 
     /** Called every time the scheduler runs while the command is scheduled. */

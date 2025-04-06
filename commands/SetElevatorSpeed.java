@@ -18,7 +18,7 @@ public class SetElevatorSpeed extends Command {
      * Creates a new {@link SetElevatorSpeed} command.
      * It controls the elevator with voltage output based on a throttle and a percent supplier
      * 
-     * @param elevator The {@link Elevator} subsystem to control
+     * @param elevator The {@link Elevator} subsystem to control.
      * @param throttle The percent voltage to apply.
      * @param percentSupplier The max percent to run at.
      */

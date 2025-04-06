@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.*;
@@ -13,28 +9,31 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.AutoLog;
 
-/** Add your docs here. */
 public interface ElevatorIO {
     @AutoLog
     public static class ElevatorIOInputs {
-        public Distance targetHeight = Meters.zero();
-        public Distance currentHeight = Meters.zero();
+        Current leftCurrent = Amps.zero();
+        Current rightCurrent = Amps.zero();
 
-        public Voltage leftVolts = Volts.zero();
-        public Voltage rightVolts = Volts.zero();
+        Temperature leftTemperature = Celsius.zero();
+        Temperature rightTemperature = Celsius.zero();
 
-        public Current leftCurrent = Amps.zero();
-        public Current rightCurrent = Amps.zero();
+        Voltage leftVolts = Volts.zero();
+        Voltage rightVolts = Volts.zero();
 
-        public Temperature leftTemp = Celsius.zero();
-        public Temperature rightTemp = Celsius.zero();
-
-        public LinearVelocity velocity = MetersPerSecond.zero();
+        Distance position = Meters.zero();
+        LinearVelocity velocity = MetersPerSecond.zero();
     }
 
-    public default void updateInputs(ElevatorIOInputs inputs) {}
+    /** Updates a set of {@link ElevatorIOInputs} with new values. */
+    public void updateInputs(ElevatorIOInputs inputs);
 
-    public default void setVolts(Voltage volts) {}
+    /** Sets the voltage output of the elevator. */
+    public void setVolts(Voltage volts);
 
-    public default void resetEncoder() {}
+    /** Resets the elevator encoder to zero. */
+    public void resetEncoder();
+
+    /** Resets the elevator encoder to the {@link Distance} value. */
+    public void resetEncoder(Distance height);
 }

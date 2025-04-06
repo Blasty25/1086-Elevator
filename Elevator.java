@@ -111,6 +111,15 @@ public class Elevator extends SubsystemBase {
     public void setPosition(Distance position) {
         voltageControl = false;
 
+        // Clamping position setpoints
+        if (position.lt(Meters.zero())) {
+            position = Meters.zero();
+        }
+
+        if (position.gt(ElevatorConstants.maxHeight)) {
+            position = ElevatorConstants.maxHeight;
+        }
+
         pid.setGoal(new State(position.in(Meters), 0));
     }
 

@@ -19,6 +19,8 @@ public class SetElevatorHeight extends Command {
     @Override
     public void initialize() {
         elevator.setPosition(height);
+        
+        // Cancels immediately because elevator.setPosition only needs to run once.
         cancel();
     }
 }

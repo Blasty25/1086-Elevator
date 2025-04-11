@@ -25,11 +25,10 @@ public class ElevatorConstants {
     public static final double kPDefault = 110;
     public static final double kIDefault = 0;
     public static final double kDDefault = 0;
-
-    public static final double[] kSDefaults = {0.6, 0.6, 0.9};
-    public static final double[] kGDefaults = {0.3, 0.3, 0.3};
-    public static final double[] kVDefaults = {3.0, 3.0, 3.0};
-    public static final double[] kADefaults = {0.4, 0.3, 0.6};
+    public static final double kSDefault = 0.7;
+    public static final double kGDefault = 0.3;
+    public static final double kVDefault = 3.0;
+    public static final double kADefault = 0.43;
 
     public static final double maxProfileVoltage = 6.0;
 

@@ -11,7 +11,9 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface ElevatorIO {
     @AutoLog
-    public static class ElevatorIOInputs {
+    public class ElevatorIOInputs {
+        Elevator.State currentState = Elevator.State.Voltage;
+
         Current leftCurrent = Amps.zero();
         Current rightCurrent = Amps.zero();
 
@@ -28,8 +30,16 @@ public interface ElevatorIO {
     /** Updates a set of {@link ElevatorIOInputs} with new values. */
     public void updateInputs(ElevatorIOInputs inputs);
 
-    /** Sets the voltage output of the elevator. */
-    public void setVolts(Voltage volts);
+    /**
+     * Sets the control mode of the elevator.
+     * 
+     * If the state is either {@link Elevator.State#Exponential Exponential} or {@link Elevator.State#Trapezoid Trapezoid} then the measure should be in meters.
+     * If the state is {@link Elevator.State#Voltage Voltage} then the measure should be in volts.
+     * 
+     * @param measure The height to go to in meters or the desired voltage to run at.
+     * @param state The {@link Elevator.State Elevator State} to use.
+     */
+    public void setControl(double measure, Elevator.State state);
 
     /** Resets the elevator encoder to zero. */
     public void resetEncoder();

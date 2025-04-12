@@ -14,6 +14,8 @@ public class ElevatorConstants {
     public static final Distance maxHeight = Inches.of(69);
     public static final double gearRatio = 9;
 
+    public static final double maxPercent = 1;
+
     public static final LinearVelocity maxVelocity = MetersPerSecond.of(1.8);
     public static final LinearAcceleration maxAcceleration = MetersPerSecondPerSecond.of(6.5);
 

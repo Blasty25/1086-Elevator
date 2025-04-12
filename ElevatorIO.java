@@ -1,12 +1,5 @@
 package frc.robot.subsystems.elevator;
 
-import static edu.wpi.first.units.Units.*;
-
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.units.measure.Temperature;
-import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ElevatorIO {
@@ -14,17 +7,18 @@ public interface ElevatorIO {
     public class ElevatorIOInputs {
         Elevator.State currentState = Elevator.State.Voltage;
 
-        Current leftCurrent = Amps.zero();
-        Current rightCurrent = Amps.zero();
+        double leftCurrent = 0; // Amps
+        double rightCurrent = 0; // Amps
 
-        Temperature leftTemperature = Celsius.zero();
-        Temperature rightTemperature = Celsius.zero();
+        double leftTemperature = 0; // Celsius
+        double rightTemperature = 0; // Celsius
 
-        Voltage leftVolts = Volts.zero();
-        Voltage rightVolts = Volts.zero();
+        double leftVolts = 0; // Voltage
+        double rightVolts = 0; // Voltage
 
-        Distance position = Meters.zero();
-        LinearVelocity velocity = MetersPerSecond.zero();
+        double position = 0; // Meters
+        double velocity = 0; // Meters / Second
+        double acceleration = 0; // Meters / Second^2
     }
 
     /** Updates a set of {@link ElevatorIOInputs} with new values. */
@@ -44,6 +38,6 @@ public interface ElevatorIO {
     /** Resets the elevator encoder to zero. */
     public void resetEncoder();
 
-    /** Resets the elevator encoder to the {@link Distance} value. */
-    public void resetEncoder(Distance height);
+    /** Resets the elevator encoder to the parameter in meters. */
+    public void resetEncoder(double height);
 }

@@ -1,9 +1,5 @@
 package frc.robot.subsystems.elevator;
 
-import static edu.wpi.first.units.Units.*;
-
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
@@ -27,21 +23,21 @@ public class Elevator extends SubsystemBase {
         Logger.processInputs("/RealOutputs/Elevator", inputs);
     }
 
-    public void setPosition(Distance position) {
+    public void setPosition(double position) {
         // Clamping position setpoints
-        if (position.lt(Meters.zero())) {
-            position = Meters.zero();
+        if (position < 0) {
+            position = 0;
         }
 
-        if (position.gt(ElevatorConstants.maxHeight)) {
+        if (position > ElevatorConstants.maxHeight) {
             position = ElevatorConstants.maxHeight;
         }
 
-        io.setControl(position.in(Meters), Elevator.State.Trapezoid);
+        io.setControl(position, Elevator.State.Trapezoid);
     }
 
-    public void setVolts(Voltage volts) {
-        io.setControl(volts.in(Volts), Elevator.State.Voltage);
+    public void setVolts(double volts) {
+        io.setControl(volts, Elevator.State.Voltage);
     }
 
     public void resetEncoder() {

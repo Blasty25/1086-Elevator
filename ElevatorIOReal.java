@@ -1,7 +1,5 @@
 package frc.robot.subsystems.elevator;
 
-import static edu.wpi.first.units.Units.*;
-
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
@@ -13,7 +11,6 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.units.measure.Distance;
 import frc.robot.util.AdjustableValues;
 
 public class ElevatorIOReal implements ElevatorIO {
@@ -35,7 +32,7 @@ public class ElevatorIOReal implements ElevatorIO {
         rightMotor = new TalonFX(rightId);
 
         config.Audio.BeepOnBoot = true;
-        config.CurrentLimits.StatorCurrentLimit = ElevatorConstants.currentLimit.in(Amps);
+        config.CurrentLimits.StatorCurrentLimit = ElevatorConstants.currentLimit;
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         config.Feedback.SensorToMechanismRatio = ElevatorConstants.gearRatio;
         config.MotionMagic.MotionMagicAcceleration = 0;
@@ -80,27 +77,28 @@ public class ElevatorIOReal implements ElevatorIO {
 
         switch(currentState) {
             case Exponential:
-                leftMotor.setControl(exponentialControl.withPosition(Radians.of(input / ElevatorConstants.radius.in(Meters))));
+                leftMotor.setControl(exponentialControl.withPosition(input / ElevatorConstants.radius / 2 / Math.PI));
                 break;
             case Trapezoid:
-                leftMotor.setControl(trapezoidControl.withPosition(Radians.of(input / ElevatorConstants.radius.in(Meters))));
+                leftMotor.setControl(trapezoidControl.withPosition(input / ElevatorConstants.radius / 2 / Math.PI));
                 break;
             case Voltage:
                 leftMotor.setControl(voltageControl.withOutput(input));
                 break;
         }
 
-        inputs.leftCurrent = leftMotor.getStatorCurrent().getValue();
-        inputs.rightCurrent = rightMotor.getStatorCurrent().getValue();
+        inputs.leftCurrent = leftMotor.getStatorCurrent().getValueAsDouble();
+        inputs.rightCurrent = rightMotor.getStatorCurrent().getValueAsDouble();
 
-        inputs.leftTemperature = leftMotor.getDeviceTemp().getValue();
-        inputs.rightTemperature = rightMotor.getDeviceTemp().getValue();
+        inputs.leftTemperature = leftMotor.getDeviceTemp().getValueAsDouble();
+        inputs.rightTemperature = rightMotor.getDeviceTemp().getValueAsDouble();
 
-        inputs.leftVolts = leftMotor.getMotorVoltage().getValue();
-        inputs.rightVolts = rightMotor.getMotorVoltage().getValue();
+        inputs.leftVolts = leftMotor.getMotorVoltage().getValueAsDouble();
+        inputs.rightVolts = rightMotor.getMotorVoltage().getValueAsDouble();
 
-        inputs.position = Meters.of(leftMotor.getPosition().getValue().in(Radians) * ElevatorConstants.radius.in(Meters));
-        inputs.velocity = MetersPerSecond.of(leftMotor.getVelocity().getValue().in(RadiansPerSecond) * ElevatorConstants.radius.in(Meters));
+        inputs.position = leftMotor.getPosition().getValueAsDouble() * ElevatorConstants.metersPerRotation;
+        inputs.velocity = leftMotor.getVelocity().getValueAsDouble() * ElevatorConstants.metersPerRotation;
+        inputs.acceleration = leftMotor.getAcceleration().getValueAsDouble() * ElevatorConstants.metersPerRotation;
     }
 
     @Override
@@ -111,11 +109,11 @@ public class ElevatorIOReal implements ElevatorIO {
 
     @Override
     public void resetEncoder() {
-        leftMotor.setPosition(Radians.zero());
+        leftMotor.setPosition(0);
     }
 
     @Override
-    public void resetEncoder(Distance distance) {
-        leftMotor.setPosition(Rotations.of(distance.div(ElevatorConstants.radius).magnitude()));
+    public void resetEncoder(double distance) {
+        leftMotor.setPosition(distance / ElevatorConstants.metersPerRotation);
     }
 }

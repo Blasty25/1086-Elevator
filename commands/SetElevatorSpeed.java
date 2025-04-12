@@ -6,26 +6,24 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.util.AdjustableValues;
 import frc.robot.util.MathUtils;
 import java.util.function.Supplier;
 
 public class SetElevatorSpeed extends Command {
     private Elevator elevator;
     private Supplier<Double> throttle;
-    private Supplier<Double> percentSupplier;
 
     /**
      * Creates a new {@link SetElevatorSpeed} command.
-     * It controls the elevator with voltage output based on a throttle and a percent supplier
+     * It controls the elevator with voltage output based on a throttle
      * 
      * @param elevator The {@link Elevator} subsystem to control.
      * @param throttle The percent voltage to apply.
-     * @param percentSupplier The max percent to run at.
      */
-    public SetElevatorSpeed(Elevator elevator, Supplier<Double> throttle, Supplier<Double> percentSupplier) {
+    public SetElevatorSpeed(Elevator elevator, Supplier<Double> throttle) {
         this.elevator = elevator;
         this.throttle = throttle;
-        this.percentSupplier = percentSupplier;
     }
 
     /** Called every time the scheduler runs while the command is scheduled. */
@@ -36,7 +34,7 @@ public class SetElevatorSpeed extends Command {
         speed = MathUtils.applyDeadbandWithOffsets(speed, Constants.deadband);
         speed = Math.copySign(speed * speed, speed);
 
-        elevator.setVolts(Volts.of(speed * percentSupplier.get() * RobotController.getInputVoltage()));
+        elevator.setVolts(Volts.of(speed * AdjustableValues.getNumber("Elevator_Percent") * RobotController.getInputVoltage()));
     }
 
     /** Called once the command ends or is interrupted. */

@@ -87,6 +87,10 @@ public class ElevatorIOSim implements ElevatorIO {
             case Voltage:
                 voltageInput = input;
                 break;
+
+            case Percent:
+                voltageInput = input * RobotController.getInputVoltage();
+                break;
         }
 
         double maxInput = RobotController.getInputVoltage();

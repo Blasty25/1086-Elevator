@@ -14,7 +14,8 @@ public class Elevator extends SubsystemBase {
     public enum State {
         Exponential,
         Trapezoid,
-        Voltage
+        Voltage,
+        Percent
     }
 
     public Elevator(ElevatorIO io) {
@@ -42,6 +43,10 @@ public class Elevator extends SubsystemBase {
 
     public void setVolts(Voltage volts) {
         io.setControl(volts.in(Volts), Elevator.State.Voltage);
+    }
+
+    public void setPercent(double percent) {
+        io.setControl(percent, Elevator.State.Percent);
     }
 
     public void resetEncoder() {

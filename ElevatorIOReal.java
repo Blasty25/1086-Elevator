@@ -2,8 +2,10 @@ package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -23,6 +25,7 @@ public class ElevatorIOReal implements ElevatorIO {
     private MotionMagicExpoVoltage exponentialControl = new MotionMagicExpoVoltage(0).withSlot(0);
     private MotionMagicVoltage trapezoidControl = new MotionMagicVoltage(0).withSlot(0);
     private VoltageOut voltageControl = new VoltageOut(0);
+    private DutyCycleOut percentControl = new DutyCycleOut(0);
 
     private TalonFXConfiguration config = new TalonFXConfiguration();
 
@@ -68,26 +71,29 @@ public class ElevatorIOReal implements ElevatorIO {
     @Override
     public void updateInputs(ElevatorIOInputs inputs) {
         Slot0Configs pidConfig = new Slot0Configs();
+        MotionMagicConfigs ffConfig = new MotionMagicConfigs();
         if (AdjustableValues.hasChanged("Elev_kP")) pidConfig.kP = AdjustableValues.getNumber("Elev_kP");
         if (AdjustableValues.hasChanged("Elev_kI")) pidConfig.kI = AdjustableValues.getNumber("Elev_kI");
         if (AdjustableValues.hasChanged("Elev_kD")) pidConfig.kD = AdjustableValues.getNumber("Elev_kD");
         if (AdjustableValues.hasChanged("Elev_kS")) pidConfig.kS = AdjustableValues.getNumber("Elev_kS");
         if (AdjustableValues.hasChanged("Elev_kG")) pidConfig.kG = AdjustableValues.getNumber("Elev_kG");
-        if (AdjustableValues.hasChanged("Elev_kV")) pidConfig.kV = AdjustableValues.getNumber("Elev_kV");
-        if (AdjustableValues.hasChanged("Elev_kA")) pidConfig.kA = AdjustableValues.getNumber("Elev_kA");
+        if (AdjustableValues.hasChanged("Elev_kV")) {
+            pidConfig.kV = AdjustableValues.getNumber("Elev_kV");
+            ffConfig.MotionMagicExpo_kV = AdjustableValues.getNumber("Elev_kV");
+        }
+        if (AdjustableValues.hasChanged("Elev_kA")){
+            pidConfig.kA = AdjustableValues.getNumber("Elev_kA");
+            ffConfig.MotionMagicExpo_kA = AdjustableValues.getNumber("Elev_kA");
+        }
 
-        if (!pidConfig.equals(new Slot0Configs())) leftMotor.getConfigurator().apply(pidConfig);
+        if (!pidConfig.serialize().equals(new Slot0Configs().serialize())) leftMotor.getConfigurator().apply(pidConfig);
+        if (!ffConfig.serialize().equals(new MotionMagicConfigs().serialize())) leftMotor.getConfigurator().apply(ffConfig);
 
         switch(currentState) {
-            case Exponential:
-                leftMotor.setControl(exponentialControl.withPosition(Radians.of(input / ElevatorConstants.radius.in(Meters))));
-                break;
-            case Trapezoid:
-                leftMotor.setControl(trapezoidControl.withPosition(Radians.of(input / ElevatorConstants.radius.in(Meters))));
-                break;
-            case Voltage:
-                leftMotor.setControl(voltageControl.withOutput(input));
-                break;
+            case Exponential -> leftMotor.setControl(exponentialControl.withPosition(Radians.of(input / ElevatorConstants.radius.in(Meters))));
+            case Trapezoid -> leftMotor.setControl(trapezoidControl.withPosition(Radians.of(input / ElevatorConstants.radius.in(Meters))));
+            case Voltage -> leftMotor.setControl(voltageControl.withOutput(input));
+            case Percent -> leftMotor.setControl(percentControl.withOutput(input));
         }
 
         inputs.leftCurrent = leftMotor.getStatorCurrent().getValue();

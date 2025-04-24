@@ -1,3 +1,4 @@
+
 package frc.robot.subsystems.elevator.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -14,7 +15,7 @@ public class SetElevatorPercent extends Command {
     /**
      * Creates a new {@link SetElevatorPercent} command.
      * It controls the elevator with percent output based on a throttle
-     * 
+     *
      * @param elevator The {@link Elevator} subsystem to control.
      * @param throttle The percent output to apply.
      */
@@ -31,7 +32,7 @@ public class SetElevatorPercent extends Command {
         speed = MathUtils.applyDeadbandWithOffsets(speed, Constants.deadband);
         speed = Math.copySign(speed * speed, speed);
 
-        elevator.setPercent(speed * AdjustableValues.getNumber("Elevator_Percent"));
+        elevator.setPercent(speed);// * AdjustableValues.getNumber("Elevator_Percent"));
     }
 
     /** Called once the command ends or is interrupted. */

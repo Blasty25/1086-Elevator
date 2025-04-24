@@ -1,3 +1,4 @@
+
 package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.*;
@@ -49,13 +50,13 @@ public class ElevatorIOReal implements ElevatorIO {
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         config.Slot0.GravityType = GravityTypeValue.Elevator_Static;
-        config.Slot0.kP = AdjustableValues.getNumber("Elev_kP");
-        config.Slot0.kI = AdjustableValues.getNumber("Elev_kI");
-        config.Slot0.kD = AdjustableValues.getNumber("Elev_kD");
-        config.Slot0.kS = AdjustableValues.getNumber("Elev_kS");
-        config.Slot0.kG = AdjustableValues.getNumber("Elev_kG");
-        config.Slot0.kV = AdjustableValues.getNumber("Elev_kV");
-        config.Slot0.kA = AdjustableValues.getNumber("Elev_kA");
+        // config.Slot0.kP = AdjustableValues.getNumber("Elev_kP");
+        // config.Slot0.kI = AdjustableValues.getNumber("Elev_kI");
+        // config.Slot0.kD = AdjustableValues.getNumber("Elev_kD");
+        // config.Slot0.kS = AdjustableValues.getNumber("Elev_kS");
+        // config.Slot0.kG = AdjustableValues.getNumber("Elev_kG");
+        // config.Slot0.kV = AdjustableValues.getNumber("Elev_kV");
+        // config.Slot0.kA = AdjustableValues.getNumber("Elev_kA");
         config.Voltage.PeakForwardVoltage = 12;
         config.Voltage.PeakReverseVoltage = -12;
 
@@ -70,24 +71,24 @@ public class ElevatorIOReal implements ElevatorIO {
 
     @Override
     public void updateInputs(ElevatorIOInputs inputs) {
-        Slot0Configs pidConfig = new Slot0Configs();
-        MotionMagicConfigs ffConfig = new MotionMagicConfigs();
-        if (AdjustableValues.hasChanged("Elev_kP")) pidConfig.kP = AdjustableValues.getNumber("Elev_kP");
-        if (AdjustableValues.hasChanged("Elev_kI")) pidConfig.kI = AdjustableValues.getNumber("Elev_kI");
-        if (AdjustableValues.hasChanged("Elev_kD")) pidConfig.kD = AdjustableValues.getNumber("Elev_kD");
-        if (AdjustableValues.hasChanged("Elev_kS")) pidConfig.kS = AdjustableValues.getNumber("Elev_kS");
-        if (AdjustableValues.hasChanged("Elev_kG")) pidConfig.kG = AdjustableValues.getNumber("Elev_kG");
-        if (AdjustableValues.hasChanged("Elev_kV")) {
-            pidConfig.kV = AdjustableValues.getNumber("Elev_kV");
-            ffConfig.MotionMagicExpo_kV = AdjustableValues.getNumber("Elev_kV");
-        }
-        if (AdjustableValues.hasChanged("Elev_kA")){
-            pidConfig.kA = AdjustableValues.getNumber("Elev_kA");
-            ffConfig.MotionMagicExpo_kA = AdjustableValues.getNumber("Elev_kA");
-        }
+        // Slot0Configs pidConfig = new Slot0Configs();
+        // MotionMagicConfigs ffConfig = new MotionMagicConfigs();
+        // if (AdjustableValues.hasChanged("Elev_kP")) pidConfig.kP = AdjustableValues.getNumber("Elev_kP");
+        // if (AdjustableValues.hasChanged("Elev_kI")) pidConfig.kI = AdjustableValues.getNumber("Elev_kI");
+        // if (AdjustableValues.hasChanged("Elev_kD")) pidConfig.kD = AdjustableValues.getNumber("Elev_kD");
+        // if (AdjustableValues.hasChanged("Elev_kS")) pidConfig.kS = AdjustableValues.getNumber("Elev_kS");
+        // if (AdjustableValues.hasChanged("Elev_kG")) pidConfig.kG = AdjustableValues.getNumber("Elev_kG");
+        // if (AdjustableValues.hasChanged("Elev_kV")) {
+        //     pidConfig.kV = AdjustableValues.getNumber("Elev_kV");
+        //     ffConfig.MotionMagicExpo_kV = AdjustableValues.getNumber("Elev_kV");
+        // }
+        // if (AdjustableValues.hasChanged("Elev_kA")){
+        //     pidConfig.kA = AdjustableValues.getNumber("Elev_kA");
+        //     ffConfig.MotionMagicExpo_kA = AdjustableValues.getNumber("Elev_kA");
+        // }
 
-        if (!pidConfig.serialize().equals(new Slot0Configs().serialize())) leftMotor.getConfigurator().apply(pidConfig);
-        if (!ffConfig.serialize().equals(new MotionMagicConfigs().serialize())) leftMotor.getConfigurator().apply(ffConfig);
+        // if (!pidConfig.serialize().equals(new Slot0Configs().serialize())) leftMotor.getConfigurator().apply(pidConfig);
+        // if (!ffConfig.serialize().equals(new MotionMagicConfigs().serialize())) leftMotor.getConfigurator().apply(ffConfig);
 
         switch(currentState) {
             case Exponential -> leftMotor.setControl(exponentialControl.withPosition(Radians.of(input / ElevatorConstants.radius.in(Meters))));

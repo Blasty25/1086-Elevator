@@ -1,3 +1,4 @@
+
 package frc.robot.subsystems.elevator.commands;
 
 import static edu.wpi.first.units.Units.Volts;
@@ -17,7 +18,7 @@ public class SetElevatorVoltage extends Command {
     /**
      * Creates a new {@link SetElevatorVoltage} command.
      * It controls the elevator with voltage output based on a throttle
-     * 
+     *
      * @param elevator The {@link Elevator} subsystem to control.
      * @param throttle The percent voltage to apply.
      */
@@ -34,7 +35,7 @@ public class SetElevatorVoltage extends Command {
         speed = MathUtils.applyDeadbandWithOffsets(speed, Constants.deadband);
         speed = Math.copySign(speed * speed, speed);
 
-        elevator.setVolts(Volts.of(speed * AdjustableValues.getNumber("Elevator_Percent") * RobotController.getInputVoltage()));
+        elevator.setVolts(Volts.of(speed));// * AdjustableValues.getNumber("Elevator_Percent") * RobotController.getInputVoltage()));
     }
 
     /** Called once the command ends or is interrupted. */

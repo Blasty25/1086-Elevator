@@ -4,7 +4,8 @@ package frc.robot.subsystems.elevator.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.util.AdjustableValues;
+import frc.robot.subsystems.elevator.ElevatorConstants;
+import frc.robot.util.TurboLogger;
 import frc.robot.util.MathUtils;
 import java.util.function.Supplier;
 
@@ -32,7 +33,7 @@ public class SetElevatorPercent extends Command {
         speed = MathUtils.applyDeadbandWithOffsets(speed, Constants.deadband);
         speed = Math.copySign(speed * speed, speed);
 
-        elevator.setPercent(speed);// * AdjustableValues.getNumber("Elevator_Percent"));
+        elevator.setPercent(speed * TurboLogger.get("Elevator_Percent", ElevatorConstants.maxPercent));
     }
 
     /** Called once the command ends or is interrupted. */

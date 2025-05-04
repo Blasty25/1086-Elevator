@@ -17,7 +17,7 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Distance;
-import frc.robot.util.AdjustableValues;
+import frc.robot.util.TurboLogger;
 
 public class ElevatorIOReal implements ElevatorIO {
     private TalonFX leftMotor;
@@ -50,13 +50,13 @@ public class ElevatorIOReal implements ElevatorIO {
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         config.Slot0.GravityType = GravityTypeValue.Elevator_Static;
-        // config.Slot0.kP = AdjustableValues.getNumber("Elev_kP");
-        // config.Slot0.kI = AdjustableValues.getNumber("Elev_kI");
-        // config.Slot0.kD = AdjustableValues.getNumber("Elev_kD");
-        // config.Slot0.kS = AdjustableValues.getNumber("Elev_kS");
-        // config.Slot0.kG = AdjustableValues.getNumber("Elev_kG");
-        // config.Slot0.kV = AdjustableValues.getNumber("Elev_kV");
-        // config.Slot0.kA = AdjustableValues.getNumber("Elev_kA");
+        config.Slot0.kP = TurboLogger.get("Elev_kP", ElevatorConstants.kPDefault);
+        config.Slot0.kI = TurboLogger.get("Elev_kI", ElevatorConstants.kIDefault);
+        config.Slot0.kD = TurboLogger.get("Elev_kD", ElevatorConstants.kDDefault);
+        config.Slot0.kS = TurboLogger.get("Elev_kS", ElevatorConstants.kSDefault);
+        config.Slot0.kG = TurboLogger.get("Elev_kG", ElevatorConstants.kGDefault);
+        config.Slot0.kV = TurboLogger.get("Elev_kV", ElevatorConstants.kVDefault);
+        config.Slot0.kA = TurboLogger.get("Elev_kA", ElevatorConstants.kADefault);
         config.Voltage.PeakForwardVoltage = 12;
         config.Voltage.PeakReverseVoltage = -12;
 
@@ -71,24 +71,24 @@ public class ElevatorIOReal implements ElevatorIO {
 
     @Override
     public void updateInputs(ElevatorIOInputs inputs) {
-        // Slot0Configs pidConfig = new Slot0Configs();
-        // MotionMagicConfigs ffConfig = new MotionMagicConfigs();
-        // if (AdjustableValues.hasChanged("Elev_kP")) pidConfig.kP = AdjustableValues.getNumber("Elev_kP");
-        // if (AdjustableValues.hasChanged("Elev_kI")) pidConfig.kI = AdjustableValues.getNumber("Elev_kI");
-        // if (AdjustableValues.hasChanged("Elev_kD")) pidConfig.kD = AdjustableValues.getNumber("Elev_kD");
-        // if (AdjustableValues.hasChanged("Elev_kS")) pidConfig.kS = AdjustableValues.getNumber("Elev_kS");
-        // if (AdjustableValues.hasChanged("Elev_kG")) pidConfig.kG = AdjustableValues.getNumber("Elev_kG");
-        // if (AdjustableValues.hasChanged("Elev_kV")) {
-        //     pidConfig.kV = AdjustableValues.getNumber("Elev_kV");
-        //     ffConfig.MotionMagicExpo_kV = AdjustableValues.getNumber("Elev_kV");
-        // }
-        // if (AdjustableValues.hasChanged("Elev_kA")){
-        //     pidConfig.kA = AdjustableValues.getNumber("Elev_kA");
-        //     ffConfig.MotionMagicExpo_kA = AdjustableValues.getNumber("Elev_kA");
-        // }
+        Slot0Configs pidConfig = new Slot0Configs();
+        MotionMagicConfigs ffConfig = new MotionMagicConfigs();
+        if (TurboLogger.hasChanged("Elev_kP")) pidConfig.kP = TurboLogger.get("Elev_kP", ElevatorConstants.kPDefault);
+        if (TurboLogger.hasChanged("Elev_kI")) pidConfig.kI = TurboLogger.get("Elev_kI", ElevatorConstants.kIDefault);
+        if (TurboLogger.hasChanged("Elev_kD")) pidConfig.kD = TurboLogger.get("Elev_kD", ElevatorConstants.kDDefault);
+        if (TurboLogger.hasChanged("Elev_kS")) pidConfig.kS = TurboLogger.get("Elev_kS", ElevatorConstants.kSDefault);
+        if (TurboLogger.hasChanged("Elev_kG")) pidConfig.kG = TurboLogger.get("Elev_kG", ElevatorConstants.kGDefault);
+        if (TurboLogger.hasChanged("Elev_kV")) {
+            pidConfig.kV = TurboLogger.get("Elev_kV", ElevatorConstants.kVDefault);
+            ffConfig.MotionMagicExpo_kV = TurboLogger.get("Elev_kV", ElevatorConstants.kVDefault);
+        }
+        if (TurboLogger.hasChanged("Elev_kA")){
+            pidConfig.kA = TurboLogger.get("Elev_kA", ElevatorConstants.kADefault);
+            ffConfig.MotionMagicExpo_kA = TurboLogger.get("Elev_kA", ElevatorConstants.kADefault);
+        }
 
-        // if (!pidConfig.serialize().equals(new Slot0Configs().serialize())) leftMotor.getConfigurator().apply(pidConfig);
-        // if (!ffConfig.serialize().equals(new MotionMagicConfigs().serialize())) leftMotor.getConfigurator().apply(ffConfig);
+        if (!pidConfig.serialize().equals(new Slot0Configs().serialize())) leftMotor.getConfigurator().apply(pidConfig);
+        if (!ffConfig.serialize().equals(new MotionMagicConfigs().serialize())) leftMotor.getConfigurator().apply(ffConfig);
 
         switch(currentState) {
             case Exponential -> leftMotor.setControl(exponentialControl.withPosition(Radians.of(input / ElevatorConstants.radius.in(Meters))));

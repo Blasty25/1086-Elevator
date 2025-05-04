@@ -12,20 +12,20 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
-import frc.robot.util.AdjustableValues;
+import frc.robot.util.TurboLogger;
 
 public class ElevatorIOSim implements ElevatorIO {
     private ElevatorSim elevator;
 
     private PIDController controller = new PIDController(
-            0, 0, 0);// AdjustableValues.getNumber("Elev_kP"),
-            // AdjustableValues.getNumber("Elev_kI"),
-            // AdjustableValues.getNumber("Elev_kD"));
+            TurboLogger.get("Elev_kP", ElevatorConstants.kPDefault),
+            TurboLogger.get("Elev_kI", ElevatorConstants.kIDefault),
+            TurboLogger.get("Elev_kD", ElevatorConstants.kDDefault));
 
     private ExponentialProfile exponentialProfile = new ExponentialProfile(
             ExponentialProfile.Constraints.fromCharacteristics(12,
-                0, 0));// AdjustableValues.getNumber("Elev_kV"),
-                // AdjustableValues.getNumber("Elev_kA")));
+                TurboLogger.get("Elev_kV", ElevatorConstants.kVDefault),
+                TurboLogger.get("Elev_kA", ElevatorConstants.kADefault)));
 
     private TrapezoidProfile trapezoidProfile = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(
@@ -50,17 +50,17 @@ public class ElevatorIOSim implements ElevatorIO {
 
     @Override
     public void updateInputs(ElevatorIOInputs inputs) {
-        // if (AdjustableValues.hasChanged("Elev_kP")) controller.setP(AdjustableValues.getNumber("Elev_kP"));
-        // if (AdjustableValues.hasChanged("Elev_kI")) controller.setI(AdjustableValues.getNumber("Elev_kI"));
-        // if (AdjustableValues.hasChanged("Elev_kD")) controller.setD(AdjustableValues.getNumber("Elev_kD"));
+        if (TurboLogger.hasChanged("Elev_kP")) controller.setP(TurboLogger.get("Elev_kP", ElevatorConstants.kPDefault));
+        if (TurboLogger.hasChanged("Elev_kI")) controller.setI(TurboLogger.get("Elev_kI", ElevatorConstants.kIDefault));
+        if (TurboLogger.hasChanged("Elev_kD")) controller.setD(TurboLogger.get("Elev_kD", ElevatorConstants.kDDefault));
 
-        // if (AdjustableValues.hasChanged("Elev_kV") || AdjustableValues.hasChanged("Elev_kA")) {
-        //     exponentialProfile = new ExponentialProfile(
-        //             ExponentialProfile.Constraints.fromCharacteristics(
-        //                 RobotController.getInputVoltage(),
-        //                 AdjustableValues.getNumber("Elev_kV"),
-        //                 AdjustableValues.getNumber("Elev_kA")));
-        // }
+        if (TurboLogger.hasChanged("Elev_kV") || TurboLogger.hasChanged("Elev_kA")) {
+            exponentialProfile = new ExponentialProfile(
+                    ExponentialProfile.Constraints.fromCharacteristics(
+                        RobotController.getInputVoltage(),
+                        TurboLogger.get("Elev_kV", ElevatorConstants.kVDefault),
+                        TurboLogger.get("Elev_kA", ElevatorConstants.kADefault)));
+        }
 
         double voltageInput = 0;
 
@@ -72,7 +72,7 @@ public class ElevatorIOSim implements ElevatorIO {
                             inputs.velocity.in(MetersPerSecond)),
                         new ExponentialProfile.State(input, 0));
 
-                voltageInput = controller.calculate(inputs.position.in(Meters), goalExpoState.position);// + (AdjustableValues.getNumber("Elev_kG") + AdjustableValues.getNumber("Elev_kS"));
+                voltageInput = controller.calculate(inputs.position.in(Meters), goalExpoState.position + TurboLogger.get("Elev_kG", ElevatorConstants.kGDefault) + TurboLogger.get("Elev_kS", ElevatorConstants.kSDefault));
                 break;
 
             case Trapezoid:
@@ -82,7 +82,7 @@ public class ElevatorIOSim implements ElevatorIO {
                             inputs.velocity.in(MetersPerSecond)),
                         new TrapezoidProfile.State(input, 0));
 
-                voltageInput = controller.calculate(inputs.position.in(Meters), goalTrapState.position);// + (AdjustableValues.getNumber("Elev_kG") + AdjustableValues.getNumber("Elev_kS"));
+                voltageInput = controller.calculate(inputs.position.in(Meters), goalTrapState.position + TurboLogger.get("Elev_kG", ElevatorConstants.kGDefault) + TurboLogger.get("Elev_kS", ElevatorConstants.kSDefault));
                 break;
 
             case Voltage:

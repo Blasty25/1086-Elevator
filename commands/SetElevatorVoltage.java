@@ -7,7 +7,8 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.util.AdjustableValues;
+import frc.robot.subsystems.elevator.ElevatorConstants;
+import frc.robot.util.TurboLogger;
 import frc.robot.util.MathUtils;
 import java.util.function.Supplier;
 
@@ -35,7 +36,7 @@ public class SetElevatorVoltage extends Command {
         speed = MathUtils.applyDeadbandWithOffsets(speed, Constants.deadband);
         speed = Math.copySign(speed * speed, speed);
 
-        elevator.setVolts(Volts.of(speed));// * AdjustableValues.getNumber("Elevator_Percent") * RobotController.getInputVoltage()));
+        elevator.setVolts(Volts.of(speed * TurboLogger.get("Elevator_Percent", ElevatorConstants.maxPercent) * RobotController.getInputVoltage()));
     }
 
     /** Called once the command ends or is interrupted. */

@@ -1,4 +1,3 @@
-
 package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.*;
@@ -34,8 +33,9 @@ public interface ElevatorIO {
     /**
      * Sets the control mode of the elevator.
      *
-     * If the state is either {@link Elevator.State#Exponential Exponential} or {@link Elevator.State#Trapezoid Trapezoid} then the measure should be in meters.
-     * If the state is {@link Elevator.State#Voltage Voltage} then the measure should be in volts.
+     * <p>If the state is either {@link Elevator.State#Exponential Exponential} or {@link
+     * Elevator.State#Trapezoid Trapezoid} then the measure should be in meters. If the state is
+     * {@link Elevator.State#Voltage Voltage} then the measure should be in volts.
      *
      * @param measure The height to go to in meters or the desired voltage to run at.
      * @param state The {@link Elevator.State Elevator State} to use.

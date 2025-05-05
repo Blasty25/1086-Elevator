@@ -1,4 +1,3 @@
-
 package frc.robot.subsystems.elevator.commands;
 
 import static edu.wpi.first.units.Units.Volts;
@@ -8,8 +7,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
-import frc.robot.util.TurboLogger;
 import frc.robot.util.MathUtils;
+import frc.robot.util.TurboLogger;
 import java.util.function.Supplier;
 
 public class SetElevatorVoltage extends Command {
@@ -17,8 +16,8 @@ public class SetElevatorVoltage extends Command {
     private Supplier<Double> throttle;
 
     /**
-     * Creates a new {@link SetElevatorVoltage} command.
-     * It controls the elevator with voltage output based on a throttle
+     * Creates a new {@link SetElevatorVoltage} command. It controls the elevator with voltage
+     * output based on a throttle
      *
      * @param elevator The {@link Elevator} subsystem to control.
      * @param throttle The percent voltage to apply.
@@ -36,7 +35,11 @@ public class SetElevatorVoltage extends Command {
         speed = MathUtils.applyDeadbandWithOffsets(speed, Constants.deadband);
         speed = Math.copySign(speed * speed, speed);
 
-        elevator.setVolts(Volts.of(speed * TurboLogger.get("Elevator_Percent", ElevatorConstants.maxPercent) * RobotController.getInputVoltage()));
+        elevator.setVolts(
+                Volts.of(
+                        speed
+                                * TurboLogger.get("Elevator_Percent", ElevatorConstants.maxPercent)
+                                * RobotController.getInputVoltage()));
     }
 
     /** Called once the command ends or is interrupted. */

@@ -1,4 +1,3 @@
-
 package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.*;
@@ -73,26 +72,37 @@ public class ElevatorIOReal implements ElevatorIO {
     public void updateInputs(ElevatorIOInputs inputs) {
         Slot0Configs pidConfig = new Slot0Configs();
         MotionMagicConfigs ffConfig = new MotionMagicConfigs();
-        if (TurboLogger.hasChanged("Elev_kP")) pidConfig.kP = TurboLogger.get("Elev_kP", ElevatorConstants.kPDefault);
-        if (TurboLogger.hasChanged("Elev_kI")) pidConfig.kI = TurboLogger.get("Elev_kI", ElevatorConstants.kIDefault);
-        if (TurboLogger.hasChanged("Elev_kD")) pidConfig.kD = TurboLogger.get("Elev_kD", ElevatorConstants.kDDefault);
-        if (TurboLogger.hasChanged("Elev_kS")) pidConfig.kS = TurboLogger.get("Elev_kS", ElevatorConstants.kSDefault);
-        if (TurboLogger.hasChanged("Elev_kG")) pidConfig.kG = TurboLogger.get("Elev_kG", ElevatorConstants.kGDefault);
+        if (TurboLogger.hasChanged("Elev_kP"))
+            pidConfig.kP = TurboLogger.get("Elev_kP", ElevatorConstants.kPDefault);
+        if (TurboLogger.hasChanged("Elev_kI"))
+            pidConfig.kI = TurboLogger.get("Elev_kI", ElevatorConstants.kIDefault);
+        if (TurboLogger.hasChanged("Elev_kD"))
+            pidConfig.kD = TurboLogger.get("Elev_kD", ElevatorConstants.kDDefault);
+        if (TurboLogger.hasChanged("Elev_kS"))
+            pidConfig.kS = TurboLogger.get("Elev_kS", ElevatorConstants.kSDefault);
+        if (TurboLogger.hasChanged("Elev_kG"))
+            pidConfig.kG = TurboLogger.get("Elev_kG", ElevatorConstants.kGDefault);
         if (TurboLogger.hasChanged("Elev_kV")) {
             pidConfig.kV = TurboLogger.get("Elev_kV", ElevatorConstants.kVDefault);
             ffConfig.MotionMagicExpo_kV = TurboLogger.get("Elev_kV", ElevatorConstants.kVDefault);
         }
-        if (TurboLogger.hasChanged("Elev_kA")){
+        if (TurboLogger.hasChanged("Elev_kA")) {
             pidConfig.kA = TurboLogger.get("Elev_kA", ElevatorConstants.kADefault);
             ffConfig.MotionMagicExpo_kA = TurboLogger.get("Elev_kA", ElevatorConstants.kADefault);
         }
 
-        if (!pidConfig.serialize().equals(new Slot0Configs().serialize())) leftMotor.getConfigurator().apply(pidConfig);
-        if (!ffConfig.serialize().equals(new MotionMagicConfigs().serialize())) leftMotor.getConfigurator().apply(ffConfig);
+        if (!pidConfig.serialize().equals(new Slot0Configs().serialize()))
+            leftMotor.getConfigurator().apply(pidConfig);
+        if (!ffConfig.serialize().equals(new MotionMagicConfigs().serialize()))
+            leftMotor.getConfigurator().apply(ffConfig);
 
-        switch(currentState) {
-            case Exponential -> leftMotor.setControl(exponentialControl.withPosition(Radians.of(input / ElevatorConstants.radius.in(Meters))));
-            case Trapezoid -> leftMotor.setControl(trapezoidControl.withPosition(Radians.of(input / ElevatorConstants.radius.in(Meters))));
+        switch (currentState) {
+            case Exponential -> leftMotor.setControl(
+                    exponentialControl.withPosition(
+                            Radians.of(input / ElevatorConstants.radius.in(Meters))));
+            case Trapezoid -> leftMotor.setControl(
+                    trapezoidControl.withPosition(
+                            Radians.of(input / ElevatorConstants.radius.in(Meters))));
             case Voltage -> leftMotor.setControl(voltageControl.withOutput(input));
             case Percent -> leftMotor.setControl(percentControl.withOutput(input));
         }
@@ -106,8 +116,14 @@ public class ElevatorIOReal implements ElevatorIO {
         inputs.leftVolts = leftMotor.getMotorVoltage().getValue();
         inputs.rightVolts = rightMotor.getMotorVoltage().getValue();
 
-        inputs.position = Meters.of(leftMotor.getPosition().getValue().in(Radians) * ElevatorConstants.radius.in(Meters));
-        inputs.velocity = MetersPerSecond.of(leftMotor.getVelocity().getValue().in(RadiansPerSecond) * ElevatorConstants.radius.in(Meters));
+        inputs.position =
+                Meters.of(
+                        leftMotor.getPosition().getValue().in(Radians)
+                                * ElevatorConstants.radius.in(Meters));
+        inputs.velocity =
+                MetersPerSecond.of(
+                        leftMotor.getVelocity().getValue().in(RadiansPerSecond)
+                                * ElevatorConstants.radius.in(Meters));
     }
 
     @Override

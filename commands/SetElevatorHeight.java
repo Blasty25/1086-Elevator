@@ -1,4 +1,3 @@
-
 package frc.robot.subsystems.elevator.commands;
 
 import edu.wpi.first.units.measure.Distance;
@@ -10,8 +9,8 @@ public class SetElevatorHeight extends Command {
     private Distance height;
 
     /**
-     * Creates a new {@link SetElevatorHeight} command.
-     * This command sets the height setpoint of the elevator.
+     * Creates a new {@link SetElevatorHeight} command. This command sets the height setpoint of the
+     * elevator.
      *
      * @param elevator The {@link Elevator} subsystem to control.
      * @param height The height to travel to.

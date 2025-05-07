@@ -2,15 +2,14 @@ package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.*;
 
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
-    private ElevatorIO io;
-    private ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
-
     public enum State {
         Exponential,
         Trapezoid,
@@ -18,38 +17,49 @@ public class Elevator extends SubsystemBase {
         Percent
     }
 
-    public Elevator(ElevatorIO io) {
-        this.io = io;
+    public Elevator.State getCurrentState() {
+        return Elevator.State.Trapezoid;
     }
 
-    @Override
-    public void periodic() {
-        io.updateInputs(inputs);
-        Logger.processInputs("/RealOutputs/Elevator", inputs);
+    public Current getLeftCurrent() {
+        return Amps.zero();
     }
 
-    public void setPosition(Distance position) {
-        // Clamping position setpoints
-        if (position.lt(Meters.zero())) {
-            position = Meters.zero();
-        }
-
-        if (position.gt(ElevatorConstants.maxHeight)) {
-            position = ElevatorConstants.maxHeight;
-        }
-
-        io.setControl(position.in(Meters), Elevator.State.Trapezoid);
+    public Current getRightCurrent() {
+        return Amps.zero();
     }
 
-    public void setVolts(Voltage volts) {
-        io.setControl(volts.in(Volts), Elevator.State.Voltage);
+    public Temperature getLeftTemperature() {
+        return Celsius.zero();
     }
 
-    public void setPercent(double percent) {
-        io.setControl(percent, Elevator.State.Percent);
+    public Temperature getRightTemperature() {
+        return Celsius.zero();
     }
 
-    public void resetEncoder() {
-        io.resetEncoder();
+    public Voltage getLeftVolts() {
+        return Volts.zero();
     }
+
+    public Voltage getRightVolts() {
+        return Volts.zero();
+    }
+
+    public Distance getPosition() {
+        return Meters.zero();
+    }
+
+    public LinearVelocity getVelocity() {
+        return MetersPerSecond.zero();
+    }
+
+    public void setPosition(Distance position) {}
+
+    public void setVolts(Voltage volts) {}
+
+    public void setPercent(double percent) {}
+
+    public void resetEncoder() {}
+
+    public void resetEncoder(Distance distance) {}
 }

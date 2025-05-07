@@ -15,10 +15,13 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Voltage;
 import frc.robot.util.TurboLogger;
 
-public class ElevatorIOReal implements ElevatorIO {
+public class ElevatorReal extends Elevator {
     private TalonFX leftMotor;
     private TalonFX rightMotor;
 
@@ -33,7 +36,7 @@ public class ElevatorIOReal implements ElevatorIO {
     // The unit of this measure changes based on the current stat
     private double input = 0;
 
-    public ElevatorIOReal(int leftId, int rightId) {
+    public ElevatorReal(int leftId, int rightId) {
         leftMotor = new TalonFX(leftId);
         rightMotor = new TalonFX(rightId);
 
@@ -69,19 +72,14 @@ public class ElevatorIOReal implements ElevatorIO {
     }
 
     @Override
-    public void updateInputs(ElevatorIOInputs inputs) {
+    public void periodic() {
         Slot0Configs pidConfig = new Slot0Configs();
         MotionMagicConfigs ffConfig = new MotionMagicConfigs();
-        if (TurboLogger.hasChanged("Elev_kP"))
-            pidConfig.kP = TurboLogger.get("Elev_kP", ElevatorConstants.kPDefault);
-        if (TurboLogger.hasChanged("Elev_kI"))
-            pidConfig.kI = TurboLogger.get("Elev_kI", ElevatorConstants.kIDefault);
-        if (TurboLogger.hasChanged("Elev_kD"))
-            pidConfig.kD = TurboLogger.get("Elev_kD", ElevatorConstants.kDDefault);
-        if (TurboLogger.hasChanged("Elev_kS"))
-            pidConfig.kS = TurboLogger.get("Elev_kS", ElevatorConstants.kSDefault);
-        if (TurboLogger.hasChanged("Elev_kG"))
-            pidConfig.kG = TurboLogger.get("Elev_kG", ElevatorConstants.kGDefault);
+        if (TurboLogger.hasChanged("Elev_kP")) pidConfig.kP = TurboLogger.get("Elev_kP", ElevatorConstants.kPDefault);
+        if (TurboLogger.hasChanged("Elev_kI")) pidConfig.kI = TurboLogger.get("Elev_kI", ElevatorConstants.kIDefault);
+        if (TurboLogger.hasChanged("Elev_kD")) pidConfig.kD = TurboLogger.get("Elev_kD", ElevatorConstants.kDDefault);
+        if (TurboLogger.hasChanged("Elev_kS")) pidConfig.kS = TurboLogger.get("Elev_kS", ElevatorConstants.kSDefault);
+        if (TurboLogger.hasChanged("Elev_kG")) pidConfig.kG = TurboLogger.get("Elev_kG", ElevatorConstants.kGDefault);
         if (TurboLogger.hasChanged("Elev_kV")) {
             pidConfig.kV = TurboLogger.get("Elev_kV", ElevatorConstants.kVDefault);
             ffConfig.MotionMagicExpo_kV = TurboLogger.get("Elev_kV", ElevatorConstants.kVDefault);
@@ -107,29 +105,78 @@ public class ElevatorIOReal implements ElevatorIO {
             case Percent -> leftMotor.setControl(percentControl.withOutput(input));
         }
 
-        inputs.leftCurrent = leftMotor.getStatorCurrent().getValue();
-        inputs.rightCurrent = rightMotor.getStatorCurrent().getValue();
-
-        inputs.leftTemperature = leftMotor.getDeviceTemp().getValue();
-        inputs.rightTemperature = rightMotor.getDeviceTemp().getValue();
-
-        inputs.leftVolts = leftMotor.getMotorVoltage().getValue();
-        inputs.rightVolts = rightMotor.getMotorVoltage().getValue();
-
-        inputs.position =
-                Meters.of(
-                        leftMotor.getPosition().getValue().in(Radians)
-                                * ElevatorConstants.radius.in(Meters));
-        inputs.velocity =
-                MetersPerSecond.of(
-                        leftMotor.getVelocity().getValue().in(RadiansPerSecond)
-                                * ElevatorConstants.radius.in(Meters));
+        TurboLogger.log("/Elevator/CurrentState", getCurrentState().name());
+        TurboLogger.log("/Elevator/LeftCurrent", getLeftCurrent().in(Amps));
+        TurboLogger.log("/Elevator/RightCurrent", getRightCurrent().in(Amps));
+        TurboLogger.log("/Elevator/LeftTemperature", getLeftTemperature().in(Celsius));
+        TurboLogger.log("/Elevator/RightTemperature", getRightTemperature().in(Celsius));
+        TurboLogger.log("/Elevator/LeftVolts", getLeftVolts().in(Volts));
+        TurboLogger.log("/Elevator/RightVolts", getRightVolts().in(Volts));
+        TurboLogger.log("/Elevator/Position", getPosition().in(Meters));
+        TurboLogger.log("/Elevator/Velocity", getVelocity().in(MetersPerSecond));
     }
 
-    @Override
-    public void setControl(double measure, Elevator.State state) {
-        input = measure;
-        currentState = state;
+    public Elevator.State getCurrentState() {
+        return currentState;
+    }
+
+    public Current getLeftCurrent() {
+        return leftMotor.getSupplyCurrent().getValue();
+    }
+
+    public Current getRightCurrent() {
+        return rightMotor.getSupplyCurrent().getValue();
+    }
+
+    public Voltage getLeftVolts() {
+        return leftMotor.getMotorVoltage().getValue();
+    }
+
+    public Voltage getRightVolts() {
+        return rightMotor.getMotorVoltage().getValue();
+    }
+
+    public Distance getPosition() {
+        return Meters.of(leftMotor.getPosition().getValue().in(Radians) * ElevatorConstants.radius.in(Meters));
+    }
+
+    public LinearVelocity getVelocity() {
+        return MetersPerSecond.of(leftMotor.getVelocity().getValue().in(RadiansPerSecond) * ElevatorConstants.radius.in(Meters));
+    }
+
+    public void setPosition(Distance position) {
+        // Clamping position setpoints
+        if (position.lt(Meters.zero())) {
+            position = Meters.zero();
+        }
+
+        if (position.gt(ElevatorConstants.maxHeight)) {
+            position = ElevatorConstants.maxHeight;
+        }
+
+        currentState = Elevator.State.Trapezoid;
+
+        input = position.in(Meters);
+    }
+
+    public void setVolts(Voltage volts) {
+        currentState = Elevator.State.Voltage;
+
+        input = volts.in(Volts);
+    }
+
+    public void setPercent(Distance position) {
+        // Clamping position setpoints
+        if (position.lt(Meters.zero())) {
+            position = Meters.zero();
+        }
+
+        if (position.gt(ElevatorConstants.maxHeight)) {
+            position = ElevatorConstants.maxHeight;
+        }
+
+        currentState = Elevator.State.Percent;
+        input = position.in(Meters);
     }
 
     @Override
